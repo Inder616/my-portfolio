@@ -736,7 +736,7 @@ const Projects = () => {
       }
     },
     { 
-      title: "Netflix Content Strategy Analysis", 
+      title: "Netflix Content Strategy Dashboard", 
       tool: "Python / Power BI", 
       metric: "19K+ Titles Analyzed",
       github: "https://github.com/Inder616/Netflix-content-strategy-dashboard",
@@ -811,7 +811,7 @@ const Footer = () => {
             className="flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-bold text-base hover:bg-emerald-400 transition-colors cursor-none shadow-lg"
           >
             <Mail className="w-5 h-5" />
-            <span>Send an Email </span>
+            <span>Send an Email</span>
           </a>
           <a 
             href="https://www.linkedin.com/in/inder-sinha/" 
