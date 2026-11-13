@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence, useSpring, useMotionValue } from 'framer-motion';
+import { ArrowUpRight, Play, Database, BarChart3, TerminalSquare, FileSpreadsheet, Award, GraduationCap, Activity, Lightbulb, Wrench, ShieldCheck, TrendingUp, Layers, MessageSquare, Zap, Download, Filter, Network, LayoutGrid, Box, PieChart, Search, Calculator, Globe, ChevronUp, Mail } from 'lucide-react';
 import * as THREE from 'three';
 
 // Custom SVG replacements for brand icons
