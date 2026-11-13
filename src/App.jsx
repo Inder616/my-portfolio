@@ -1044,9 +1044,9 @@ const Experience = () => {
       company: "SVLL",
       date: "Jul 2026 – Oct 2026",
       points: [
-        "Replaced a 2–4 hour daily manual reporting process with live Power BI dashboards, consolidating data from 7 ERP modules across 62 depots and saving an estimated 10–15 man-hours per week.",
-        "Built SQL and Power Query transformation logic across 32 validated fields and developed 20+ DAX measures and KPI views for LR/POD status, lead time, delays and on-time performance.",
-        "Delivered Power BI reports covering freight budget vs actuals, 112K+ vehicle placements, daily dispatch planning, 1.2M+ claim records and HR analytics."
+        "Developed live Power BI dashboards by consolidating data from 7 ERP modules, replacing manual reporting with a centralised reporting solution.",
+        "Designed SQL queries and Power Query transformations across 32 validated fields, implementing business logic and DAX calculations to monitor LR/POD status, lead times, delays, and on-time performance through interactive dashboards and record-level drill-through.",
+        "Developed analytical reports covering freight budget vs. actuals, 112K+ vehicle placements, daily dispatch planning, 1.2M+ claim records, and HR recruitment analytics, supporting operational monitoring, cost analysis, and business decision-making."
       ]
     },
     {
@@ -1054,8 +1054,9 @@ const Experience = () => {
       company: "VNR Seeds",
       date: "Jun 2025 – Aug 2025",
       points: [
-        "Cleaned and validated 10,000+ farmer records in Python (pandas), Excel and Google Sheets by standardising formats, removing duplicates and resolving missing values, improving reporting accuracy by ~20%.",
-        "Analysed 50,000+ customer interactions across digital channels in Excel and Power BI, building segmentation logic that identified 3 high-engagement segments to shape targeting strategy."
+        "Cleaned and validated 10,000+ farmer records using Python (Pandas), Excel, and Google Sheets, standardising data formats, removing duplicates, and handling missing values to improve data quality and reporting accuracy.",
+        "Analysed 50,000+ customer interactions across digital channels using Excel and Power BI to identify engagement patterns, customer trends, and behavioural insights.",
+        "Created interactive reports and visualisations in Power BI to present customer engagement trends, compare performance across digital channels, and support data-driven reporting."
       ]
     }
   ];
@@ -1214,7 +1215,7 @@ const SkillsDetail = () => {
         
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="mb-16">
           <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter mb-4">
-            TECHNICAL <span className="italic font-light text-white/50">ARSENAL</span>
+            TECHNICAL <span className="italic font-light text-white/50">Skills</span>
           </h2>
           <p className="text-white/40 max-w-2xl text-lg font-light">
             A purpose-built stack for transforming messy databases into executive-ready narratives.
@@ -1243,7 +1244,7 @@ const SkillsDetail = () => {
         {/* Professional Acumen Grid */}
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="mb-12">
           <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter mb-4">
-            PROFESSIONAL <span className="italic font-light text-white/50">ACUMEN</span>
+            PROFESSIONAL <span className="italic font-light text-white/50">Skills</span>
           </h2>
         </motion.div>
 
@@ -1268,12 +1269,13 @@ const Projects = () => {
 
   const projects = [
     { 
-      title: "HR Analytics Engine", 
+      title: "HR Analytics Dashboard", 
       tool: "Power BI / DAX / SQL", 
       metric: "21d Turnaround Identified",
       color: "from-emerald-500/20",
       glowColor: "#10b981",
       strokeColor: "#34d399",
+      github: "https://github.com/Inder616/Recruitment-Funnel-Hiring-Analytics-Dashboard",
       chartData: {
         title: "RECRUITMENT OVERVIEW",
         kpis: [
@@ -1286,12 +1288,13 @@ const Projects = () => {
       }
     },
     { 
-      title: "Patient No-Show Prediction", 
+      title: "Patient-Appointment-Delay-No-Show-Analysis", 
       tool: "Python / Pandas", 
       metric: "111K+ Records Processed",
       color: "from-cyan-500/20",
       glowColor: "#06b6d4",
       strokeColor: "#22d3ee",
+      github: "https://github.com/Inder616/Patient-Appointment-Delay-No-Show-Analysis",
       chartData: {
         title: "APPOINTMENT METRICS",
         kpis: [
@@ -1310,6 +1313,7 @@ const Projects = () => {
       color: "from-blue-500/20",
       glowColor: "#3b82f6",
       strokeColor: "#60a5fa",
+      github: "https://github.com/Inder616/Global-Data-Jobs-Salary-Dashboard",
       chartData: {
         title: "SALARY DISTRIBUTION",
         kpis: [
@@ -1322,12 +1326,13 @@ const Projects = () => {
       }
     },
     { 
-      title: "Content Strategy Model", 
+      title: "Netflix Content Strategy Analysis", 
       tool: "Python / Power BI", 
       metric: "19K+ Titles Analyzed",
       color: "from-purple-500/20",
       glowColor: "#a855f7",
       strokeColor: "#c084fc",
+      github: "https://github.com/Inder616/Netflix-content-strategy-dashboard",
       chartData: {
         title: "CATALOGUE GROWTH",
         kpis: [
@@ -1503,20 +1508,26 @@ const Footer = () => {
             Whether you need a dedicated Data Analyst to drive your BI initiatives, or just want to discuss a complex dataset, my inbox is open.
           </motion.p>
           
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-6">
-            <MagneticButton className="px-10 py-5 rounded-full bg-white text-black font-bold text-lg hover:scale-105 transition-transform group flex items-center justify-center gap-3">
-              <span>Send an Email</span>
-              <div className="w-2 h-2 rounded-full bg-black group-hover:bg-emerald-500 transition-colors" />
-            </MagneticButton>
-            <MagneticButton className="px-10 py-5 rounded-full border border-white/20 bg-transparent text-white font-bold text-lg hover:bg-white/[0.05] transition-colors flex items-center justify-center gap-3">
-              <span>View LinkedIn</span>
-              <ArrowUpRight className="w-5 h-5 text-cyan-400" />
-            </MagneticButton>
-          </motion.div>
-        </motion.div>
+        <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-6">
+         {/* Email Button */}
+         <a href="mailto:sinhainder616@gmail.com">
+           <MagneticButton className="px-10 py-5 rounded-full bg-white text-black font-bold text-lg hover:scale-105 transition-transform group flex items-center justify-center gap-3">
+             <span>Send an Email</span>
+             <div className="w-2 h-2 rounded-full bg-black group-hover:bg-emerald-500 transition-colors" />
+          </MagneticButton>
+         </a>
+
+         {/* LinkedIn Button */}
+         <a href="https://www.linkedin.com/in/inder-sinha/" target="_blank" rel="noopener noreferrer">
+          <MagneticButton className="px-10 py-5 rounded-full border border-white/20 bg-transparent text-white font-bold text-lg hover:bg-white/5 transition-colors flex items-center justify-center gap-3">
+            <span>View LinkedIn</span>
+            <ArrowUpRight className="w-5 h-5 text-cyan-400" />
+         </MagneticButton>
+       </a>
+       </motion.div>
         
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/10 text-sm font-light text-white/40 gap-4">
-          <p>© 2026 Inder Sinha. Located in Chhattisgarh, India.</p>
+          <p>© 2026 Inder Sinha. </p>
           <div className="flex items-center gap-8">
             {['LinkedIn', 'GitHub', 'Email', 'Download CV'].map((link) => (
               <a key={link} href="#" className="hover:text-emerald-400 transition-colors duration-300">
