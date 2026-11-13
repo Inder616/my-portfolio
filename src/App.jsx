@@ -310,7 +310,7 @@ const Services3DModel = () => {
     let height = mountRef.current.clientHeight;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-    camera.position.set(0, 8, 22);
+    camera.position.set(0, 10, 25);
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -318,69 +318,61 @@ const Services3DModel = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mountRef.current.appendChild(renderer.domElement);
 
-    const group = new THREE.Group();
-    scene.add(group);
+    // Glowing Holographic Dodecahedron Wireframe Core
+    const coreGeo = new THREE.DodecahedronGeometry(6, 1);
+    const coreMat = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.12
+    });
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    scene.add(coreMesh);
 
-    const cols = 40;
-    const rows = 20;
-    const sep = 1.15;
-    const numParticles = cols * rows;
-    const positions = new Float32Array(numParticles * 3);
-    const colors = new Float32Array(numParticles * 3);
+    // Floating Data Nodes
+    const particleCount = 200;
+    const particleGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
 
-    const colorEmerald = new THREE.Color(0x10b981);
-    const colorCyan = new THREE.Color(0x06b6d4);
+    const col1 = new THREE.Color(0x10b981);
+    const col2 = new THREE.Color(0x06b6d4);
 
-    let i = 0;
-    for (let x = 0; x < cols; x++) {
-      for (let z = 0; z < rows; z++) {
-        positions[i * 3] = (x - cols / 2) * sep;
-        positions[i * 3 + 1] = 0;
-        positions[i * 3 + 2] = (z - rows / 2) * sep;
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 24;
+      positions[i + 1] = (Math.random() - 0.5) * 16;
+      positions[i + 2] = (Math.random() - 0.5) * 24;
 
-        const mixedColor = colorEmerald.clone().lerp(colorCyan, x / cols);
-        colors[i * 3] = mixedColor.r;
-        colors[i * 3 + 1] = mixedColor.g;
-        colors[i * 3 + 2] = mixedColor.b;
-        i++;
-      }
+      const mixed = col1.clone().lerp(col2, Math.random());
+      colors[i] = mixed.r;
+      colors[i + 1] = mixed.g;
+      colors[i + 2] = mixed.b;
     }
 
-    const waveGeo = new THREE.BufferGeometry();
-    waveGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    waveGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    const waveMat = new THREE.PointsMaterial({
-      size: 0.075,
+    const particleMat = new THREE.PointsMaterial({
+      size: 0.12,
       vertexColors: true,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.5,
       blending: THREE.AdditiveBlending
     });
 
-    const wavePoints = new THREE.Points(waveGeo, waveMat);
-    wavePoints.position.y = -2;
-    group.add(wavePoints);
+    const particleSystem = new THREE.Points(particleGeo, particleMat);
+    scene.add(particleSystem);
 
     let animId;
     const clock = new THREE.Clock();
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      const time = clock.getElapsedTime() * 0.5;
+      const time = clock.getElapsedTime() * 0.4;
 
-      const posArr = wavePoints.geometry.attributes.position.array;
-      let idx = 0;
-      for (let x = 0; x < cols; x++) {
-        for (let z = 0; z < rows; z++) {
-          const px = posArr[idx * 3];
-          const pz = posArr[idx * 3 + 2];
-          posArr[idx * 3 + 1] = Math.sin(px * 0.25 + time) * 1.1 + Math.cos(pz * 0.3 + time) * 0.7;
-          idx++;
-        }
-      }
-      wavePoints.geometry.attributes.position.needsUpdate = true;
-      group.rotation.y = Math.sin(time * 0.15) * 0.1;
+      coreMesh.rotation.y = time * 0.2;
+      coreMesh.rotation.x = time * 0.1;
+      particleSystem.rotation.y = -time * 0.15;
 
       renderer.render(scene, camera);
     };
@@ -402,82 +394,66 @@ const Services3DModel = () => {
       if (mountRef.current && renderer.domElement) {
         mountRef.current.removeChild(renderer.domElement);
       }
-      waveGeo.dispose();
-      waveMat.dispose();
+      coreGeo.dispose();
+      coreMat.dispose();
+      particleGeo.dispose();
+      particleMat.dispose();
       renderer.dispose();
     };
   }, []);
-
-  return <div ref={mountRef} className="absolute inset-0 z-0 pointer-events-none opacity-65 mix-blend-screen" />;
+  return <div ref={mountRef} className="absolute inset-0 z-0 pointer-events-none opacity-75 mix-blend-screen" />;
 };
 
 const Hero = () => {
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 1000], [0, 200]);
+  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
+
   return (
-    <section className="relative w-full min-h-[92vh] flex flex-col items-center justify-center overflow-hidden pt-28 pb-16">
+    <section className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
       <Hero3DModel />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] max-w-[700px] max-h-[700px] bg-emerald-500/[0.07] blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
       
       <motion.div 
-        className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 flex flex-col items-center text-center"
+        style={{ y, opacity }}
+        className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col items-center text-center mt-20"
         variants={staggerContainer}
         initial="hidden"
         animate="show"
       >
-        {/* Recruiter Status Pill */}
-        <motion.div variants={fadeUp} className="mb-6 inline-flex flex-wrap items-center justify-center gap-2.5 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-[#0c1421]/90 backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-mono tracking-wider uppercase text-emerald-100">
-            Inderjeet Sinha · Data & BI Analyst
+        <motion.div variants={fadeUp} className="mb-4">
+          <span className="px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md text-xs font-medium tracking-widest uppercase text-emerald-100">
+            Data Analytics & Intelligence
           </span>
-          <span className="hidden sm:inline text-white/20">|</span>
-          <span className="hidden sm:inline text-xs font-mono text-cyan-300"> MBA (Business Analytics)</span>
         </motion.div>
         
-        <motion.h1 variants={fadeUp} className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.25rem] leading-[1.04] tracking-tight font-bold text-white max-w-5xl">
-          Turning operational data into <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400">decision-ready BI.</span>
+        <motion.h1 className="text-[12vw] md:text-[8vw] leading-[0.85] tracking-tighter font-bold text-white mb-6">
+          <motion.span variants={fadeUp} className="block">RAW DATA</motion.span>
+          <motion.span variants={fadeUp} className="block italic text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">
+            CLEAR INSIGHTS
+          </motion.span>
         </motion.h1>
         
-        <motion.p variants={fadeUp} className="mt-6 text-base sm:text-lg md:text-xl text-white/65 max-w-2xl font-light leading-relaxed">
-          I consolidate multi-module ERP data, write production SQL & Python cleaning pipelines, and build interactive Power BI & Excel dashboards that cut manual reporting.
+        <motion.p variants={fadeUp} className="mt-2 text-base md:text-xl text-white/50 max-w-xl font-light">
+          I transform complex, fragmented datasets into strategic business intelligence using advanced SQL, Power BI, and Python.
         </motion.p>
         
-        {/* Primary Action Bar */}
-        <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center justify-center gap-3.5 w-full sm:w-auto">
+        <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center justify-center gap-4">
           <a 
-            href="#projects" 
-            className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-emerald-500 text-slate-950 font-semibold text-sm sm:text-base hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(16,185,129,0.25)] cursor-pointer"
+            href="#projects"
+            className="px-8 py-4 rounded-full bg-emerald-500 text-slate-950 font-bold text-base hover:bg-emerald-400 transition-all flex items-center gap-2 shadow-[0_0_30px_rgba(16,185,129,0.3)] cursor-pointer"
           >
             <span>Explore Case Studies (5)</span>
-            <ArrowUpRight className="w-4 h-4" />
+            <ArrowUpRight className="w-5 h-5" />
           </a>
           <a 
             href="/Inder_Data_Analyst_CV.pdf" 
             download
-            className="w-full sm:w-auto px-7 py-3.5 rounded-xl border border-white/15 bg-white/[0.04] text-white font-medium text-sm sm:text-base hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="px-8 py-4 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-white font-medium text-base hover:bg-white/10 hover:border-emerald-400 transition-all flex items-center gap-2 cursor-pointer"
           >
-            <Download className="w-4 h-4 text-emerald-400" />
+            <Download className="w-5 h-5 text-emerald-400" />
             <span>Download Resume (PDF)</span>
           </a>
-        </motion.div>
-
-        {/* Recruiter At-a-Glance Proof Strip */}
-        <motion.div variants={fadeUp} className="mt-14 pt-8 border-t border-white/10 w-full max-w-4xl grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-left">
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-white/40">Core Stack</div>
-            <div className="text-sm sm:text-base font-semibold text-white mt-1">SQL · Power BI · Python · Excel</div>
-          </div>
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-white/40">ERP Integration</div>
-            <div className="text-sm sm:text-base font-semibold text-emerald-400 mt-1">7 Modules Unified</div>
-          </div>
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-white/40">Scale Handled</div>
-            <div className="text-sm sm:text-base font-semibold text-cyan-400 mt-1">1.2M+ Claim & Ops Rows</div>
-          </div>
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-white/40">Education</div>
-            <div className="text-sm sm:text-base font-semibold text-white mt-1">MBA · Analytics & Mktg</div>
-          </div>
         </motion.div>
       </motion.div>
     </section>
@@ -518,7 +494,7 @@ const DataStackVisual = () => {
       >
         <motion.div style={{ rotateX: mouseRotateX, rotateY: mouseRotateY, transformStyle: "preserve-3d" }} className="relative w-64 h-64 sm:w-76 sm:h-76 md:w-80 md:h-80">
            {/* Layer 1: Real SQL Extraction Layer */}
-           <motion.div animate={{ z: [-140, -140, -2, -2, -2, -2, -140] }} transition={loopSequence} className="absolute inset-0 border border-emerald-500/30 bg-[#050a14] rounded-3xl overflow-hidden p-5 flex flex-col justify-between">
+           <motion.div animate={{ z: [-140, -140, -2, -2, -2, -2, -140] }} transition={loopSequence} className="absolute inset-0 border border-emerald-500/30 bg-[#050a14] rounded-3xl overflow-hidden p-5 flex flex-col justify-between shadow-2xl">
               <div className="flex justify-between items-center text-[11px] font-mono text-emerald-400">
                 <span>01_SQL_EXTRACTION.sql</span>
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -531,7 +507,7 @@ const DataStackVisual = () => {
            </motion.div>
            
            {/* Layer 2: DAX & Power Query Transformation */}
-           <motion.div animate={{ z: [0, 0, -1, -1, -1, -1, 0] }} transition={loopSequence} className="absolute inset-0 border border-cyan-400/50 bg-cyan-950/30 backdrop-blur-md rounded-3xl p-5 flex flex-col justify-between">
+           <motion.div animate={{ z: [0, 0, -1, -1, -1, -1, 0] }} transition={loopSequence} className="absolute inset-0 border border-cyan-400/50 bg-cyan-950/40 backdrop-blur-md rounded-3xl p-5 flex flex-col justify-between shadow-2xl">
               <div className="flex justify-between items-center text-[11px] font-mono text-cyan-300">
                 <span>02_DAX_MEASURES</span>
                 <span className="text-[10px] bg-cyan-500/20 px-2 py-0.5 rounded">Star Schema</span>
@@ -549,37 +525,43 @@ const DataStackVisual = () => {
               <div className="text-[10px] font-mono text-white/35 uppercase tracking-wider">Power Query · Pandas</div>
            </motion.div>
            
-           {/* Layer 3: Final Polished Executive Dashboard */}
-           <motion.div animate={{ z: [140, 140, 0, 0, 0, 0, 140] }} transition={loopSequence} className="absolute inset-0 border border-white/25 bg-[#0a121e]/95 backdrop-blur-2xl rounded-3xl p-5 flex flex-col shadow-2xl">
+           {/* Layer 3: Final Polished Executive Dashboard (Redesigned professionally) */}
+           <motion.div animate={{ z: [140, 140, 0, 0, 0, 0, 140] }} transition={loopSequence} className="absolute inset-0 border border-emerald-500/40 bg-[#08101e]/95 backdrop-blur-2xl rounded-3xl p-5 flex flex-col shadow-[0_20px_50px_rgba(16,185,129,0.15)]">
               <motion.div animate={{ opacity: [0, 0, 0, 1, 1, 0, 0], y: [10, 10, 10, 0, 0, 10, 10] }} transition={loopSequence} className="w-full h-full flex flex-col justify-between">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center border-b border-white/10 pb-3">
                    <div>
-                     <span className="text-xs font-bold text-white tracking-wide">OPERATIONAL BI REPORT</span>
-                     <p className="text-[10px] text-white/45">Automated Drill-Through View</p>
+                     <span className="text-xs font-bold text-white tracking-wider block">EXECUTIVE BI REPORT</span>
+                     <span className="text-[9px] font-mono text-emerald-400">Real-time ERP Drill-Through</span>
                    </div>
                    <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full shadow-[0_0_10px_#34d399]" />
                 </div>
                 
                 <div className="grid grid-cols-3 gap-2 my-2">
-                   <div className="bg-white/[0.04] border border-white/5 rounded-xl p-2">
-                      <div className="text-[9px] text-white/40 uppercase">Claims</div>
-                      <div className="text-xs sm:text-sm font-bold text-white">1.2M+</div>
+                   <div className="bg-white/[0.04] border border-white/10 rounded-xl p-2.5 flex flex-col justify-center">
+                      <span className="text-[8px] font-mono uppercase text-white/40">Claims</span>
+                      <span className="text-sm font-extrabold text-white">1.2M+</span>
                    </div>
-                   <div className="bg-white/[0.04] border border-white/5 rounded-xl p-2">
-                      <div className="text-[9px] text-white/40 uppercase">Fields</div>
-                      <div className="text-xs sm:text-sm font-bold text-cyan-400">32</div>
+                   <div className="bg-white/[0.04] border border-white/10 rounded-xl p-2.5 flex flex-col justify-center">
+                      <span className="text-[8px] font-mono uppercase text-white/40">Fields</span>
+                      <span className="text-sm font-extrabold text-cyan-400">32</span>
                    </div>
-                   <div className="bg-white/[0.04] border border-white/5 rounded-xl p-2">
-                      <div className="text-[9px] text-white/40 uppercase">Manual</div>
-                      <div className="text-xs sm:text-sm font-bold text-emerald-400">Replaced</div>
+                   <div className="bg-white/[0.04] border border-white/10 rounded-xl p-2.5 flex flex-col justify-center">
+                      <span className="text-[8px] font-mono uppercase text-white/40">Manual</span>
+                      <span className="text-xs font-extrabold text-emerald-400">Automated</span>
                    </div>
                 </div>
 
-                {/* Simulated Mini Chart */}
-                <div className="h-14 relative flex items-end gap-1.5 pt-2 border-t border-white/10">
-                   {[45, 65, 55, 85, 72, 95, 82, 100].map((val, i) => (
-                      <div key={i} className="flex-1 bg-gradient-to-t from-emerald-500/30 to-cyan-400 rounded-t" style={{ height: `${val}%` }} />
-                   ))}
+                {/* Professional Performance Chart */}
+                <div className="pt-2 border-t border-white/10">
+                  <div className="flex justify-between items-center text-[9px] font-mono text-white/40 mb-1.5">
+                    <span>SLA PERFORMANCE</span>
+                    <span className="text-emerald-400">100% Target</span>
+                  </div>
+                  <div className="h-16 relative flex items-end gap-1.5 bg-black/30 p-2 rounded-xl border border-white/5">
+                     {[55, 70, 62, 88, 78, 95, 85, 100].map((val, i) => (
+                       <div key={i} className="flex-1 bg-gradient-to-t from-emerald-500/40 via-cyan-400 to-emerald-300 rounded-t" style={{ height: `${val}%` }} />
+                     ))}
+                  </div>
                 </div>
               </motion.div>
            </motion.div>
@@ -591,54 +573,53 @@ const DataStackVisual = () => {
 
 const About = () => {
   return (
-    <section id="about" className="relative w-full py-20 md:py-28 bg-[#090e17] z-10 border-t border-white/5">
-      <div className="max-w-[1360px] mx-auto px-5 sm:px-8 md:px-12">
-        <motion.div variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true }} className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          <div className="lg:col-span-5 order-2 lg:order-1 relative h-[340px] sm:h-[400px] lg:h-[440px] overflow-hidden rounded-3xl bg-[#060a11] border border-white/10">
+    <section id="about" className="relative w-full py-24 md:py-32 bg-[#090e17] z-10 border-t border-white/5">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
+        <motion.div variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true }} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          
+          {/* Left Side: Made significantly larger while keeping exact 3D Data Stack model */}
+          <div className="lg:col-span-6 relative h-[420px] sm:h-[480px] lg:h-[540px] overflow-hidden rounded-3xl bg-[#060a11] border border-white/10 shadow-2xl">
             <DataStackVisual />
-            <div className="absolute bottom-3 left-0 right-0 text-center pointer-events-none">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-white/30">
-                Pipeline: SQL → DAX Model → Executive BI
+            <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
+              <span className="text-xs font-mono uppercase tracking-widest text-white/40">
+                PIPELINE: SQL → DAX MODEL → EXECUTIVE BI
               </span>
             </div>
           </div>
-          <div className="lg:col-span-7 order-1 lg:order-2">
-            <span className="text-xs font-mono tracking-[0.2em] uppercase text-emerald-400 mb-3 block">01 / Profile</span>
-            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight mb-6 leading-[1.1] text-white">
-              Analytical rigour backed by <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">business context.</span>
+
+          {/* Right Side: Updated text matching your reference image */}
+          <div className="lg:col-span-6">
+            <span className="text-xs font-mono tracking-[0.2em] uppercase text-emerald-400 mb-3 block">01 / ABOUT ME</span>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1] text-white">
+              I turn complex data into <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">business clarity.</span>
             </h2>
-            <p className="text-white/80 text-base sm:text-lg font-light leading-relaxed mb-4">
-              Hi, I'm Inder — a Data Analyst with an MBA in Business Analytics & Marketing. I use SQL, Power BI, Python, and Excel to transform complex datasets into meaningful insights and clear business reports.
+            <p className="text-white/80 text-base sm:text-lg font-light leading-relaxed mb-6">
+              Hi, I'm Inder — a Data Analyst with an MBA in Business Analytics & Marketing. I work with SQL, Power BI, Python, and Excel to explore data, uncover patterns, and build dashboards that make business performance easier to understand.
             </p>
-            <p className="text-white/55 text-sm sm:text-base font-light leading-relaxed mb-7">
-              From analysing business performance to building interactive dashboards, I enjoy uncovering patterns, tracking key metrics, and turning data into insights that support better decisions.
+            <p className="text-white/55 text-sm sm:text-base font-light leading-relaxed mb-8">
+              My experience includes working with ERP data, developing reporting solutions, analysing recruitment and operational performance, and building analytical projects across different domains. I enjoy solving business problems through structured analysis and clear visualisation.
             </p>
 
-            {/* Education & Credentials Pill */}
-            <div className="p-4 rounded-2xl bg-white/[0.025] border border-white/10 flex items-center gap-4 mb-8">
-              <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                <GraduationCap className="w-5 h-5 text-emerald-400" />
+            {/* Bottom 4 Tech Pillars */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/10">
+              <div>
+                <span className="text-base font-bold text-white mb-1 block">SQL</span>
+                <span className="text-xs text-white/45 font-light">Querying & analysis</span>
               </div>
               <div>
-                <div className="text-sm sm:text-base font-semibold text-white">MBA in Business Analytics & Marketing</div>
-                <div className="text-xs text-white/45 font-light">Bridging raw data engineering with commercial KPIs, operational SLAs, and executive reporting</div>
+                <span className="text-base font-bold text-cyan-400 mb-1 block">Power BI</span>
+                <span className="text-xs text-white/45 font-light">Dashboards & DAX</span>
+              </div>
+              <div>
+                <span className="text-base font-bold text-emerald-400 mb-1 block">Python</span>
+                <span className="text-xs text-white/45 font-light">Data cleaning & EDA</span>
+              </div>
+              <div>
+                <span className="text-base font-bold text-purple-400 mb-1 block">Excel</span>
+                <span className="text-xs text-white/45 font-light">Reporting & analysis</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-6 border-t border-white/10">
-              <div>
-                <span className="text-2xl sm:text-4xl font-bold text-white mb-1 block">1.2M+</span>
-                <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-white/45">Records Processed</span>
-              </div>
-              <div>
-                <span className="text-2xl sm:text-4xl font-bold text-emerald-400 mb-1 block">32 Fields</span>
-                <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-white/45">SQL/ETL Validated</span>
-              </div>
-              <div>
-                <span className="text-2xl sm:text-4xl font-bold text-cyan-400 mb-1 block">5 Repos</span>
-                <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-white/45">Public Case Studies</span>
-              </div>
-            </div>
           </div>
         </motion.div>
       </div>
@@ -871,7 +852,8 @@ const ProfessionalSkills = () => {
   ];
 
   return (
-    <section className="relative w-full py-20 md:py-28 bg-[#090e17] z-10 border-t border-white/5">
+    <section className="relative w-full py-20 md:py-28 bg-[#090e17] z-10 border-t border-white/5 overflow-hidden">
+      <Services3DModel />
       <div className="max-w-[1360px] mx-auto px-5 sm:px-8 md:px-12 relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
@@ -911,21 +893,21 @@ const EducationAndCertifications = () => {
       title: "IBM Data Analyst Professional Certificate",
       issuer: "Coursera",
       year: "2026",
-      link: "https://www.coursera.org",
+      link: "https://coursera.org/share/0d98d574482c7e5987b9f9ff46c2a9d9",
       color: "from-blue-500/20 to-cyan-500/20"
     },
     {
       title: "Microsoft Power BI Data Analyst Professional Certificate",
       issuer: "Coursera",
       year: "2026",
-      link: "https://www.coursera.org",
+      link: "https://coursera.org/share/1ce1c674788775187d84370c89a76e8b",
       color: "from-emerald-500/20 to-teal-500/20"
     },
     {
       title: "Google Business Intelligence Professional Certificate",
       issuer: "Coursera",
       year: "2026",
-      link: "https://www.coursera.org",
+      link: "https://coursera.org/share/1ea420bdd199d2f58e06502af6af5f3a",
       color: "from-purple-500/20 to-indigo-500/20"
     }
   ];
@@ -949,8 +931,9 @@ const EducationAndCertifications = () => {
   ];
 
   return (
-    <section className="relative w-full py-20 md:py-28 bg-[#090e17] z-10 border-t border-white/5">
-      <div className="max-w-[1360px] mx-auto px-5 sm:px-8 md:px-12">
+    <section className="relative w-full py-20 md:py-28 bg-[#090e17] z-10 border-t border-white/5 overflow-hidden">
+      <Services3DModel />
+      <div className="max-w-[1360px] mx-auto px-5 sm:px-8 md:px-12 relative z-10">
         {/* Certifications Subsection */}
         <div className="mb-16">
           <div className="flex items-center gap-3 mb-8">
