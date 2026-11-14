@@ -443,7 +443,7 @@ const Hero = () => {
             href="#projects"
             className="px-8 py-4 rounded-full bg-emerald-500 text-slate-950 font-bold text-base hover:bg-emerald-400 transition-all flex items-center gap-2 shadow-[0_0_30px_rgba(16,185,129,0.3)] cursor-pointer"
           >
-            <span>Explore Case Studies (5)</span>
+            <span>Explore Dashboards (5)</span>
             <ArrowUpRight className="w-5 h-5" />
           </a>
           <a 
@@ -603,6 +603,10 @@ const About = () => {
             {/* Bottom 4 Tech Pillars */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/10">
               <div>
+              <div>
+                <span className="text-base font-bold text-purple-400 mb-1 block">Excel</span>
+                <span className="text-xs text-white/45 font-light">Reporting & analysis</span>
+              </div>
                 <span className="text-base font-bold text-white mb-1 block">SQL</span>
                 <span className="text-xs text-white/45 font-light">Querying & analysis</span>
               </div>
@@ -614,10 +618,7 @@ const About = () => {
                 <span className="text-base font-bold text-emerald-400 mb-1 block">Python</span>
                 <span className="text-xs text-white/45 font-light">Data cleaning & EDA</span>
               </div>
-              <div>
-                <span className="text-base font-bold text-purple-400 mb-1 block">Excel</span>
-                <span className="text-xs text-white/45 font-light">Reporting & analysis</span>
-              </div>
+
             </div>
 
           </div>
@@ -1108,7 +1109,7 @@ const Projects = () => {
   return (
     <section id="projects" className="relative w-full py-20 md:py-28 bg-[#0c121e] z-10 border-t border-white/5">
       <div className="max-w-[1360px] mx-auto px-5 sm:px-8 md:px-12">
-        <span className="text-xs font-mono tracking-[0.2em] uppercase text-emerald-400 mb-3 block">05 / Case Studies</span>
+        <span className="text-xs font-mono tracking-[0.2em] uppercase text-emerald-400 mb-3 block">05 / Projects</span>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
           <div>
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
@@ -1238,16 +1239,10 @@ const Footer = () => {
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-500 text-slate-950 font-semibold text-sm sm:text-base hover:bg-emerald-400 transition-colors cursor-pointer shadow-lg"
           >
             <Mail className="w-4 h-4" />
-            <span>{email}</span>
+            <span>Send an Email</span>
           </a>
 
-          <button 
-            onClick={handleCopyEmail}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/5 border border-white/15 text-white font-medium text-sm sm:text-base hover:bg-white/10 hover:border-emerald-400 transition-all cursor-pointer"
-          >
-            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-white/60" />}
-            <span>{copied ? "Email Copied!" : "Copy Email"}</span>
-          </button>
+
 
           <a 
             href="/Inder_Data_Analyst_CV.pdf" 
@@ -1282,7 +1277,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between text-white/40 text-xs font-mono gap-4">
-          <span>© {new Date().getFullYear()} Inderjeet Sinha</span>
+          <span>© {new Date().getFullYear()} Inder</span>
           <span>SQL · Power BI · Python · Excel</span>
         </div>
       </div>
@@ -1299,13 +1294,13 @@ export default function App() {
       <nav className="fixed top-0 left-0 w-full z-40 px-5 sm:px-8 md:px-12 py-3.5 bg-[#090e17]/85 backdrop-blur-xl border-b border-white/10 flex justify-between items-center">
         <a href="#" className="text-base sm:text-lg font-bold tracking-tight text-white cursor-pointer flex items-center gap-2.5">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
-          <span>INDER SINHA</span>
+          <span>INDER </span>
         </a>
         <div className="hidden md:flex items-center gap-7 text-sm font-medium text-white/75">
           <a href="#about" className="hover:text-emerald-400 transition-colors cursor-pointer">Profile</a>
           <a href="#experience" className="hover:text-emerald-400 transition-colors cursor-pointer">Experience</a>
           <a href="#skills" className="hover:text-emerald-400 transition-colors cursor-pointer">Technical Stack</a>
-          <a href="#projects" className="hover:text-emerald-400 transition-colors cursor-pointer">Case Studies</a>
+          <a href="#projects" className="hover:text-emerald-400 transition-colors cursor-pointer">Projects</a>
           <a href="#contact" className="hover:text-emerald-400 transition-colors cursor-pointer">Contact</a>
           <a 
             href="/Inder_Data_Analyst_CV.pdf" 
@@ -1339,7 +1334,7 @@ export default function App() {
             <a href="#about" onClick={() => setMobileMenuOpen(false)} className="text-white/85 py-2.5 px-3 rounded-lg hover:bg-white/5 border-b border-white/5">01 / Profile & MBA</a>
             <a href="#experience" onClick={() => setMobileMenuOpen(false)} className="text-white/85 py-2.5 px-3 rounded-lg hover:bg-white/5 border-b border-white/5">02 / Work Experience</a>
             <a href="#skills" onClick={() => setMobileMenuOpen(false)} className="text-white/85 py-2.5 px-3 rounded-lg hover:bg-white/5 border-b border-white/5">03 / Technical Stack</a>
-            <a href="#projects" onClick={() => setMobileMenuOpen(false)} className="text-white/85 py-2.5 px-3 rounded-lg hover:bg-white/5 border-b border-white/5">04 / Case Studies (5)</a>
+            <a href="#projects" onClick={() => setMobileMenuOpen(false)} className="text-white/85 py-2.5 px-3 rounded-lg hover:bg-white/5 border-b border-white/5">04 / Projects (5)</a>
             <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-white/85 py-2.5 px-3 rounded-lg hover:bg-white/5">05 / Contact</a>
             <a 
               href="/Inder_Data_Analyst_CV.pdf" 
