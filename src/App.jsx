@@ -602,11 +602,12 @@ const About = () => {
 
             {/* Bottom 4 Tech Pillars */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/10">
-              <div>
+            
               <div>
                 <span className="text-base font-bold text-purple-400 mb-1 block">Excel</span>
                 <span className="text-xs text-white/45 font-light">Reporting & analysis</span>
               </div>
+              <div>
                 <span className="text-base font-bold text-white mb-1 block">SQL</span>
                 <span className="text-xs text-white/45 font-light">Querying & analysis</span>
               </div>
